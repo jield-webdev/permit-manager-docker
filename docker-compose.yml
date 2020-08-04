@@ -1,0 +1,37 @@
+version: '3'
+services:
+
+  app:
+    image: safe4us.azurecr.io/safe4us:v1
+    container_name: safe4us
+    restart: unless-stopped
+    tty: true
+    environment:
+      SAFETYFORM_ENVIRONMENT: development
+    working_dir: /var/www
+    ports:
+      - "8080:80"
+      - "8443:443"
+    networks:
+      - safe4us-network
+
+  solr:
+    image: solr:8
+    container_name: solr
+    tty: true
+    ports:
+      - "18983:8983"
+    volumes:
+      - './solr:/var/solr/data'
+    networks:
+      - safe4us-network
+
+  redis:
+      image: redis:latest
+      container_name: redis
+      networks:
+        - safe4us-network
+
+networks:
+  safe4us-network:
+    driver: bridge
