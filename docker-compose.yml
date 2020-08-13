@@ -5,29 +5,33 @@ services:
     image: safe4us.azurecr.io/safe4us:v1
     container_name: safe4us
     restart: unless-stopped
-    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2222:2222"
+    depends_on: 
+      - solr
+      - redis
     environment:
       SAFETYFORM_ENVIRONMENT: development
     working_dir: /var/www
-    ports:
-      - "8080:80"
-      - "8443:443"
     networks:
       - safe4us-network
 
   solr:
-    image: solr:8
+    image: safe4us.azurecr.io/solr:v1
     container_name: solr
-    tty: true
     ports:
-      - "18983:8983"
-    volumes:
-      - './solr:/var/solr/data'
+      - "8983:8983"
+    entrypoint:
+      - sh
+      - "-c"
+      - "precreate-core safetyform_asset /opt/solr/server/solr/configsets/asset; precreate-core safetyform_building /opt/solr/server/solr/configsets/building; precreate-core safetyform_floor /opt/solr/server/solr/configsets/floor; precreate-core safetyform_space /opt/solr/server/solr/configsets/space; precreate-core safetyform_permit /opt/solr/server/solr/configsets/permit;  exec solr -f"
     networks:
       - safe4us-network
 
   redis:
-      image: redis:latest
+      image: library/redis:latest
       container_name: redis
       networks:
         - safe4us-network
