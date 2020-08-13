@@ -1,10 +1,1 @@
 .idea
-/solr/asset/data
-/solr/building/data
-/solr/floor/data
-/solr/permit/data
-/solr/space/data
-/solr/filestore
-/solr/usefiles
-/solr/solr.xml
-/solr/zoo.cfg
